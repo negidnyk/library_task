@@ -34,3 +34,8 @@ class UserCreate(schemas.BaseUserCreate):
 class UserUpdate(BaseModel):
     username: Optional[str] = None
 
+
+class UserInBorrowHistory(BaseModel):
+    id: int
+    email: str
+    username: str
