@@ -1,17 +1,17 @@
 To set up the project:
-    1. Pull the project
-    2. Run command: "pip install -r requirements.txt"
-    3. Wait until packages are installed
-    4. Set up .env file with DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS, AUTH_SECRET, RESET_PASS_SECRET variables
-    5. Run command "alembic upgrade head" for applying DB migration: 30d7458d17bd_init_migration.py
-    6. Go to the any PostgresSQL management tool (PGAdmin, for example)
-    7. Connect to the DB with your own creds which you used for DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
-    8. Make sure that "alembic_version" table contains valid version (30d7458d17bd)
-    9. Make sure that tables: roles, users, books, authors, genres, publishers, borrowed_books are crated
-    10. Make sure that table 'roles' contains 2 roles: librarian with id 1 and borrower with id 2
-    11. Run command: "uvicorn main:app --reload"
-    12. Go to the path: "http://127.0.0.1:8000/docs#/" in a browser
-    13. Interact with a Swagger
+1. Pull the project
+2. Run command: "pip install -r requirements.txt"
+3. Wait until packages are installed
+4. Set up .env file with DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS, AUTH_SECRET, RESET_PASS_SECRET variables
+5. Run command "alembic upgrade head" for applying DB migration: 30d7458d17bd_init_migration.py
+6. Go to the any PostgresSQL management tool (PGAdmin, for example)
+7. Connect to the DB with your own creds which you used for DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
+8. Make sure that "alembic_version" table contains valid version (30d7458d17bd)
+9. Make sure that tables: roles, users, books, authors, genres, publishers, borrowed_books are crated
+10. Make sure that table 'roles' contains 2 roles: librarian with id 1 and borrower with id 2
+11. Run command: "uvicorn main:app --reload"
+12. Go to the path: "http://127.0.0.1:8000/docs#/" in a browser
+13. Interact with a Swagger
 
 Information about authentication:
 Authentication is based on Bearer tokens
