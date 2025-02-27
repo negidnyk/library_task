@@ -21,14 +21,14 @@ Authentication is based on Bearer tokens. There 3 APIs in swagger:
     
 To interract with swagger you have to be autenticated, so you can use "/auth/jwt/register" endpoint to create a user with data like this: 
 {
-  "email": "testemail@gmail.com",
-  "password": "Qwerty12#",
-  "is_active": true,
-  "is_superuser": false,
-  "is_verified": false,
-  "username": "Test User",
-  "role_id": 1, // 1 is librarian role, 2 is borrower (there are restrictions added for using endpoints according to role of user)
-  "is_deleted": false
+"email": "testemail@gmail.com",
+"password": "Qwerty12#",
+"is_active": true,
+"is_superuser": false,
+"is_verified": false,
+"username": "Test User",
+"role_id": 1, // 1 is librarian role, 2 is borrower (there are restrictions added for using endpoints according to role of user)
+"is_deleted": false
 }
 
 Then you should use "/auth/jwt/login" endpint to log in. You should submit username (actually, it`s email. Funny tricks of fastapi-users lib) and password to be signed in. According to the data for creating a user, email and password is:
