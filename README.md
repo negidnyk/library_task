@@ -15,10 +15,10 @@ To set up the project:
 
 Information about authentication:
 Authentication is based on Bearer tokens
-    There 3 APIs in swagger:
-    1. /auth/jwt/login
-    2. /auth/jwt/logout
-    3. /auth/jwt/register
+There 3 APIs in swagger:
+1. /auth/jwt/login
+2. /auth/jwt/logout
+3. /auth/jwt/register
     
 To interract with swagger you have to be autenticated, so you can use "/auth/jwt/register" endpoint to create a user with data like this: 
 {
