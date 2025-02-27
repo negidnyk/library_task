@@ -52,7 +52,7 @@ Restrictions of endpints by role:
 
 Validations of endpints:
 1. POST "/authors/add/": name should be unique, date should be in the past
-2. POST "/books/add/": isbn should be unique, author, genre, publisher should exist in db, publish_date should be in the past
+2. POST "/books/add/": isbn should be unique and has valid format (validation on Pydantic side), author, genre, publisher should exist in db, publish_date should be in the past
 3. DELETE "/books/{book_id}/": book with submitted id should exist in DB
 4. POST "/books/borrow/{book_id}/": user, who borrows, should has an id == 2 (borrower), book with submitted id should exist in DB, book with submitted id should not be borrowed yet (is_borrowed == False)
 5. POST "/books/return/{book_id}/": user, who returns, should has an id == 2 (borrower), book with submitted id should exist in DB, user should have a record of borrowing specified book in borrowed_books table with empty return_date, book with submitted id should exist in DB should be borrowed (is_borrowed == True)
