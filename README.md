@@ -14,8 +14,7 @@ To set up the project:
 13. Interact with a Swagger
 
 Information about authentication:
-Authentication is based on Bearer tokens
-There 3 APIs in swagger:
+Authentication is based on Bearer tokens. There 3 APIs in swagger:
 1. /auth/jwt/login
 2. /auth/jwt/logout
 3. /auth/jwt/register
