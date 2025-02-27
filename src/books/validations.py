@@ -73,9 +73,3 @@ async def is_book_exist(book_id, session):
     if not result:
         raise HTTPException(status_code=404, detail="Book with such id does not exist")
 
-# async def is_borrow_history_empty(book_id, session):
-#     query = select(BorrowedBooks).where(BorrowedBooks.book_id == book_id)
-#     borrowed_book = await session.execute(query)
-#     result = borrowed_book.scalar_one_or_none()
-#     if not result:
-#         raise HTTPException(status_code=400, detail="Given book`s history ")

@@ -253,7 +253,6 @@ class BookCrud:
         await validate_int_id(book_id)
         await is_book_exist(book_id, session)
         await is_book_borrowed(book_id, session)
-        #добавить првоерку на юзера
 
         try:
             stmt = delete(BooksModel).where(BooksModel.id == book_id)
