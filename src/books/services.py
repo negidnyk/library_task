@@ -3,18 +3,22 @@ from sqlalchemy import select, update, delete, insert, and_
 from src.books.models import BooksModel, BorrowedBooks
 from src.books.schemas import Book, BookAdd, BookInfo, BookBorrowHistory
 from src.books.validations import is_isbn_unique, is_author_exists_in_db, is_book_borrowed, is_book_not_borrowed, \
-    is_borrower, is_book_exist
+    is_borrower, is_book_exist, is_genre_exists_in_db, is_publisher_exists_in_db
 from src.books.helpers import get_user
 from src.validations.validations import validate_int_id
+from src.users.borrower.validations import is_borrower
+from src.users.librarian.validations import is_librarian
 from datetime import date
 
 
 class BookCrud:
     @staticmethod
-    async def create_book(book_details, session):
+    async def create_book(book_details, session, user):
 
         await is_isbn_unique(book_details.isbn, session)
         await is_author_exists_in_db(book_details.author_id, session)
+        await is_genre_exists_in_db(book_details.genre_id, session)
+        await is_publisher_exists_in_db(book_details.publisher_id, session)
 
         try:
             stmt = insert(BooksModel).values(title=book_details.title,
@@ -44,24 +48,83 @@ class BookCrud:
                                 detail=f"Something went wrong in add book api service. Details:\n{e}")
 
     @staticmethod
-    async def get_all_books(skip, limit, session):
+    async def get_all_books(skip, limit, session, sort_by, order):
 
-        try:
-            query = select(BooksModel).limit(limit).offset(skip)
-            books_list = await session.execute(query)
-            result_list = books_list.scalars().all()
-            return [BookInfo(id=book.id,
-                             title=book.title,
-                             isbn=book.isbn,
-                             publisher_id=book.publisher_id,
-                             publish_date=book.publish_date,
-                             author_id=book.author_id,
-                             genre_id=book.genre_id,
-                             is_borrowed=book.is_borrowed) for book in result_list]
+        if sort_by == "title" and order == "asc":
 
-        except Exception as e:
-            raise HTTPException(status_code=500,
-                                detail=f"Something went wrong in get all books api service. Details:\n{e}")
+            try:
+                query = select(BooksModel).limit(limit).offset(skip).order_by(BooksModel.title.asc())
+                books_list = await session.execute(query)
+                result_list = books_list.scalars().all()
+                return [BookInfo(id=book.id,
+                                 title=book.title,
+                                 isbn=book.isbn,
+                                 publisher_id=book.publisher_id,
+                                 publish_date=book.publish_date,
+                                 author_id=book.author_id,
+                                 genre_id=book.genre_id,
+                                 is_borrowed=book.is_borrowed) for book in result_list]
+
+            except Exception as e:
+                raise HTTPException(status_code=500,
+                                    detail=f"Something went wrong in get all books api service. Details:\n{e}")
+
+        if sort_by == "title" and order == "desc":
+
+            try:
+                query = select(BooksModel).limit(limit).offset(skip).order_by(BooksModel.title.desc())
+                books_list = await session.execute(query)
+                result_list = books_list.scalars().all()
+                return [BookInfo(id=book.id,
+                                 title=book.title,
+                                 isbn=book.isbn,
+                                 publisher_id=book.publisher_id,
+                                 publish_date=book.publish_date,
+                                 author_id=book.author_id,
+                                 genre_id=book.genre_id,
+                                 is_borrowed=book.is_borrowed) for book in result_list]
+
+            except Exception as e:
+                raise HTTPException(status_code=500,
+                                    detail=f"Something went wrong in get all books api service. Details:\n{e}")
+
+        if sort_by == "publish_date" and order == "asc":
+
+            try:
+                query = select(BooksModel).limit(limit).offset(skip).order_by(BooksModel.publish_date.asc())
+                books_list = await session.execute(query)
+                result_list = books_list.scalars().all()
+                return [BookInfo(id=book.id,
+                                 title=book.title,
+                                 isbn=book.isbn,
+                                 publisher_id=book.publisher_id,
+                                 publish_date=book.publish_date,
+                                 author_id=book.author_id,
+                                 genre_id=book.genre_id,
+                                 is_borrowed=book.is_borrowed) for book in result_list]
+
+            except Exception as e:
+                raise HTTPException(status_code=500,
+                                    detail=f"Something went wrong in get all books api service. Details:\n{e}")
+
+        if sort_by == "publish_date" and order == "desc":
+
+            try:
+                query = select(BooksModel).limit(limit).offset(skip).order_by(BooksModel.publish_date.desc())
+                books_list = await session.execute(query)
+                result_list = books_list.scalars().all()
+                return [BookInfo(id=book.id,
+                                 title=book.title,
+                                 isbn=book.isbn,
+                                 publisher_id=book.publisher_id,
+                                 publish_date=book.publish_date,
+                                 author_id=book.author_id,
+                                 genre_id=book.genre_id,
+                                 is_borrowed=book.is_borrowed) for book in result_list]
+
+            except Exception as e:
+                raise HTTPException(status_code=500,
+                                    detail=f"Something went wrong in get all books api service. Details:\n{e}")
 
     @staticmethod
     async def get_book_by_id(book_id, session):
@@ -93,6 +156,7 @@ class BookCrud:
     @staticmethod
     async def borrow_book(book_id, session, user):
 
+        await is_borrower(user.id)
         await validate_int_id(book_id)
         await is_book_exist(book_id, session)
         await is_book_borrowed(book_id, session)
@@ -126,6 +190,7 @@ class BookCrud:
     @staticmethod
     async def return_book(book_id, session, user):
 
+        await is_borrower(user.id)
         await validate_int_id(book_id)
         await is_book_exist(book_id, session)
         await is_book_not_borrowed(book_id, session)
@@ -161,8 +226,9 @@ class BookCrud:
                                 detail=f"Something went wrong in add author api service. Details:\n{e}")
 
     @staticmethod
-    async def get_book_borrowing_history(book_id, session):
+    async def get_book_borrowing_history(book_id, session, user):
 
+        await is_librarian(user.id)
         await validate_int_id(book_id)
         await is_book_exist(book_id, session)
 
@@ -179,3 +245,21 @@ class BookCrud:
         except Exception as e:
             raise HTTPException(status_code=500,
                                 detail=f"Something went wrong in get borrowing history api service. Details:\n{e}")
+
+    @staticmethod
+    async def delete_book(book_id, session, user):
+
+        await is_librarian(user.id)
+        await validate_int_id(book_id)
+        await is_book_exist(book_id, session)
+        await is_book_borrowed(book_id, session)
+        #добавить првоерку на юзера
+
+        try:
+            stmt = delete(BooksModel).where(BooksModel.id == book_id)
+            await session.execute(stmt)
+            await session.commit()
+
+        except Exception as e:
+            raise HTTPException(status_code=500,
+                                detail=f"Something went wrong in delete book api service. Details:\n{e}")

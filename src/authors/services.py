@@ -5,12 +5,14 @@ from src.books.models import BooksModel
 from src.books.schemas import Book, BookAdd, BookInfo
 from src.authors.schemas import Author, AuthorInfo, AuthorAdd
 from src.validations.validations import validate_int_id
+from src.users.librarian.validations import is_librarian
 
 
 class AuthorCrud:
     @staticmethod
-    async def create_author(author_details, session):
-        #добавить проверку на уникальность в valdiations, в бд уже есть
+    async def create_author(author_details, session, user):
+
+        await is_librarian(user.id)
 
         try:
             stmt = insert(AuthorsModel).values(name=author_details.name, birthdate=author_details.birthdate)

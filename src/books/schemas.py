@@ -1,5 +1,6 @@
 from typing import Any, List, Optional
 from pydantic import BaseModel, Field, PastDate
+from enum import Enum
 from pydantic_extra_types.isbn import ISBN
 from datetime import date, datetime, time, timedelta
 from src.auth.schemas import UserInBorrowHistory
@@ -35,3 +36,13 @@ class BookBorrowHistory(BaseModel):
     user: UserInBorrowHistory
     borrow_date: date
     return_date: date
+
+
+class BookSortBy(str, Enum):
+    title = "title"
+    publish_date = "publish_date"
+
+
+class BookSortDirections(str, Enum):
+    asc = "asc"
+    desc = "desc"

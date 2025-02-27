@@ -17,7 +17,7 @@ current_active_user = fastapi_users.current_user(active=True)
 @router.post("/add/", status_code=201)
 async def add_new_genre(genre_details: GenreAdd, session: AsyncSession = Depends(get_async_session),
                        user: UserModel = Depends(current_active_user)):
-    return await GenreCrud.create_genre(genre_details, session)
+    return await GenreCrud.create_genre(genre_details, session, user)
 
 
 @router.get("/list/", status_code=200)

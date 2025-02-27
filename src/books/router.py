@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_async_session
 from src.auth.base_config import fastapi_users
 from src.books.services import BookCrud
-from src.books.schemas import Book, BookAdd, BookInfo
+from src.books.schemas import Book, BookAdd, BookInfo, BookSortBy, BookSortDirections
 from src.auth.models import UserModel
 
 router = APIRouter(
@@ -17,13 +17,17 @@ current_active_user = fastapi_users.current_user(active=True)
 @router.post("/add/", status_code=201)
 async def add_new_book(book_details: BookAdd, session: AsyncSession = Depends(get_async_session),
                        user: UserModel = Depends(current_active_user)):
-    return await BookCrud.create_book(book_details, session)
+    return await BookCrud.create_book(book_details, session, user)
 
 
 @router.get("/list/", status_code=200)
-async def get_all_books(skip: int = 0, limit: int = 10, session: AsyncSession = Depends(get_async_session),
+async def get_all_books(sort_by: BookSortBy,
+                        order: BookSortDirections,
+                        skip: int = 0,
+                        limit: int = 10,
+                        session: AsyncSession = Depends(get_async_session),
                         user: UserModel = Depends(current_active_user)):
-    return await BookCrud.get_all_books(skip, limit, session)
+    return await BookCrud.get_all_books(skip, limit, session, sort_by, order)
 
 
 @router.get("/{book_id}/", status_code=200)
@@ -47,4 +51,10 @@ async def return_book(book_id: int, session: AsyncSession = Depends(get_async_se
 @router.get("/{book_id}/history/", status_code=200)
 async def get_book_borrow_history(book_id: int, session: AsyncSession = Depends(get_async_session),
                                   user: UserModel = Depends(current_active_user)):
-    return await BookCrud.get_book_borrowing_history(book_id, session)
+    return await BookCrud.get_book_borrowing_history(book_id, session, user)
+
+
+@router.delete("/{book_id}/", status_code=204)
+async def delete_book_by_id(book_id: int, session: AsyncSession = Depends(get_async_session),
+                            user: UserModel = Depends(current_active_user)):
+    return await BookCrud.delete_book(book_id, session, user)

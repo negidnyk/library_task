@@ -3,14 +3,16 @@ from sqlalchemy import select, update, delete, insert, and_
 from src.genres.models import GenresModel
 from src.genres.schemas import Genre, GenreAdd, GenreInfo
 from src.genres.validations import is_genre_unique
+from src.users.librarian.validations import is_librarian
 from datetime import date
 
 
 class GenreCrud:
 
     @staticmethod
-    async def create_genre(genre_details, session):
+    async def create_genre(genre_details, session, user):
 
+        await is_librarian(user.id)
         await is_genre_unique(genre_details.name.lower(), session)
 
         try:

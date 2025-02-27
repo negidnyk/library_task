@@ -17,7 +17,7 @@ current_active_user = fastapi_users.current_user(active=True)
 @router.post("/add/", status_code=201)
 async def add_new_author(author_details: AuthorAdd, session: AsyncSession = Depends(get_async_session),
                          user: UserModel = Depends(current_active_user)):
-    return await AuthorCrud.create_author(author_details, session)
+    return await AuthorCrud.create_author(author_details, session, user)
 
 
 @router.get("/list/", status_code=200)

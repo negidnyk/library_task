@@ -3,14 +3,16 @@ from sqlalchemy import select, update, delete, insert, and_
 from src.publishers.models import PublishersModel
 from src.publishers.schemas import Publisher, PublisherAdd, PublisherInfo
 from src.publishers.validations import is_publisher_unique
+from src.users.librarian.validations import is_librarian
 from datetime import date
 
 
 class PublisherCrud:
 
     @staticmethod
-    async def create_publisher(publisher_details, session):
+    async def create_publisher(publisher_details, session, user):
 
+        await is_librarian(user.id)
         await is_publisher_unique(publisher_details.name.lower(), session)
 
         try:
